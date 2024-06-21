@@ -2,7 +2,7 @@
 //
 // メイン処理 [ Program.cs ]
 // Author:Kenta Nakamoto
-// Data 2024/06/14
+// Data 2024/06/21
 //
 //--------------------------------------------------
 using System;
@@ -24,19 +24,46 @@ namespace ConsoleApp1
         //--------------------------------------------
         // メソッド
 
+        /// <summary>
+        /// メイン処理
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             // 入力数値格納用
-            int[] cardNums = new int[MAX_CARD_NUM];
+            List<int> numList = new List<int>();
 
-            // ペア数格納用
-            int pairNum;
+            // 一致数格納用
+            List<int> matchCntList = new List<int>();
 
+            // カードの最大数分入力させる
             for (int i = 0; i < MAX_CARD_NUM; i++)
-            {   // カードの最大数分入力させる
-                cardNums[i] = new int();
-                cardNums[i] = InputCardNum();
+            {
+                numList.Add(InputCardNum());
             }
+
+            // 改行
+            Console.WriteLine();
+
+            // ペア数の取得処理
+            for (int i = 0;i < MAX_CARD_NUM; i++)
+            {
+                // 一致する値のリストを生成
+                List<int> findList1 = numList.FindAll(n => n == numList[i]);
+
+                // 生成したリストの長さを取得
+                matchCntList.Add(findList1.Count);
+            }
+
+            // 結果判定・表示
+            OutputResult(matchCntList);
+
+            // 改行
+            Console.WriteLine();
+
+            // 終了処理
+            Console.Write("Enterを押して終了...");
+            Console.ReadLine();
         }
 
         /// <summary>
@@ -72,6 +99,42 @@ namespace ConsoleApp1
             }
 
             return cardNum;
+        }
+
+        /// <summary>
+        /// 結果表示処理
+        /// </summary>
+        /// <param name="list">一致結果</param>
+        private static void OutputResult(List<int> list) 
+        {
+            // ペア数毎の表示処理
+            switch (list.Max())
+            {
+                case 1:
+                    Console.WriteLine("ノーペア...");
+                    break;
+
+                case 2:
+                    if (list.FindAll(n => n == 2).Count == 4)
+                    {
+                        Console.WriteLine("ツーペア！");
+                        break;
+                    }
+
+                    Console.WriteLine("ワンペア");
+                    break;
+
+                case 3:
+                    Console.WriteLine("スリーカード！");
+                    break;
+
+                case 4:
+                    Console.WriteLine("フォーカード！");
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }
