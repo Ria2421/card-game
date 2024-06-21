@@ -6,8 +6,10 @@
 //
 //--------------------------------------------------
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +20,9 @@ namespace ConsoleApp1
         //--------------------------------------------
         // フィールド
 
-        // 最大カード数
+        /// <summary>
+        /// 最大カード数
+        /// </summary>
         private const int MAX_CARD_NUM = 4;
 
         //--------------------------------------------
@@ -30,38 +34,53 @@ namespace ConsoleApp1
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            // 入力数値格納用
-            List<int> numList = new List<int>();
-
-            // 一致数格納用
-            List<int> matchCntList = new List<int>();
-
-            // カードの最大数分入力させる
-            for (int i = 0; i < MAX_CARD_NUM; i++)
+            while (true)
             {
-                numList.Add(InputCardNum());
+                // 入力数値格納用
+                List<int> numList = new List<int>();
+
+                // 一致数格納用
+                List<int> matchCntList = new List<int>();
+
+                // カードの最大数分入力させる
+                for (int i = 0; i < MAX_CARD_NUM; i++)
+                {
+                    numList.Add(InputCardNum());
+                }
+
+                // 改行
+                Console.WriteLine();
+
+                // ペア数の取得処理
+                for (int i = 0; i < MAX_CARD_NUM; i++)
+                {
+                    // 一致する値のリストを生成
+                    List<int> findList1 = numList.FindAll(n => n == numList[i]);
+
+                    // 生成したリストの長さを取得
+                    matchCntList.Add(findList1.Count);
+                }
+
+                // 結果判定・表示
+                OutputResult(matchCntList);
+
+                // 改行
+                Console.WriteLine();
+
+                if (CheckRetry())
+                {
+                    // 改行
+                    Console.WriteLine("\n"); 
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
-
-            // 改行
-            Console.WriteLine();
-
-            // ペア数の取得処理
-            for (int i = 0;i < MAX_CARD_NUM; i++)
-            {
-                // 一致する値のリストを生成
-                List<int> findList1 = numList.FindAll(n => n == numList[i]);
-
-                // 生成したリストの長さを取得
-                matchCntList.Add(findList1.Count);
-            }
-
-            // 結果判定・表示
-            OutputResult(matchCntList);
-
-            // 改行
-            Console.WriteLine();
 
             // 終了処理
+            Console.WriteLine("");
             Console.Write("Enterを押して終了...");
             Console.ReadLine();
         }
@@ -134,6 +153,40 @@ namespace ConsoleApp1
 
                 default:
                     break;
+            }
+        }
+
+        /// <summary>
+        /// リトライ処理
+        /// </summary>
+        /// <returns></returns>
+        private static bool CheckRetry()
+        {
+            while (true)
+            {
+                // 回答の入力
+                Console.Write("■ もう一度遊びますか？ 1:Yes 2:No > ");
+                string str = Console.ReadLine();
+
+                if (!int.TryParse(str, out int answer))
+                {   // 数字じゃない時
+                    Console.WriteLine("入力された値が数字ではありませんでした。");
+                    continue;
+                }
+
+                // 数値が範囲内かチェック
+                if (answer == 1)
+                {
+                    return true;
+                }
+                else if (answer == 2)
+                {
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("入力された値が範囲内ではありませんでした。");
+                }
             }
         }
     }
